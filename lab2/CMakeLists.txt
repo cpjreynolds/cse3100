@@ -1,0 +1,5 @@
+add_executable(fizzbuzz fizzbuzz.c)
+add_executable(square square.c)
+add_executable(darts darts.c)
+add_executable(binomial binomial.c)
+add_executable(logarithm logarithm.c)
