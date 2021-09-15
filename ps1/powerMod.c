@@ -1,3 +1,4 @@
+#include "../toolbox.h"
 #include <stdio.h>
 
 // I genuinely couldn't think of a way to do it without recursion.
@@ -23,7 +24,8 @@ int powmod(int n, int x, int m) {
 int main(int argc, char* argv[]) {
     printf("Please enter n, e and m: ");
     int n, e, m;
-    if (scanf("%d %d %d", &n, &e, &m) == 3) {
+    // if (scanf("%d %d %d", &n, &e, &m) == 3) {
+    if (prompt("Please enter n, e and m: ", "%d %d %d", &n, &e, &m) == 3) {
         int r = powmod(n, e, m);
         printf("%d ** %d mod %d = %d\n", n, e, m, r);
     } else {
