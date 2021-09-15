@@ -7,5 +7,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+add_compile_options(-Wall)
+
 add_subdirectory(lab2)
 add_subdirectory(ps1)
+add_subdirectory(ps2)

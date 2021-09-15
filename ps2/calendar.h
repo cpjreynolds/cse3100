@@ -9,12 +9,25 @@
 #define FRIDAY 5
 #define SATURDAY 6
 
-#define JAN 1
 /*
-  TODO: Define February through November here.
- */
+#define JAN 1
 #define DEC 12
-
+*/
+// Or.....
+enum {
+    JAN = 1,
+    FEB,
+    MAR,
+    APR,
+    MAY,
+    JUN,
+    JUL,
+    AUG,
+    SEP,
+    OCT,
+    NOV,
+    DEC,
+};
 
 int numDaysInMonth(int month, int year);
 int numFirstMondays(int startYear, int endYear, int janFirstWeekday);
