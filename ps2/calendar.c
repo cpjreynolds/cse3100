@@ -1,15 +1,18 @@
 #include "calendar.h"
 #include <stdio.h>
 
-int feb_days(int year) {
+int feb_days(int year)
+{
     if ((year % 100 && !(year % 4)) || (!(year % 100) && !(year % 400))) {
         return 29;
-    } else {
+    }
+    else {
         return 28;
     }
 }
 
-int numDaysInMonth(int month, int year) {
+int numDaysInMonth(int month, int year)
+{
     /*
 
      */
@@ -41,12 +44,22 @@ int numDaysInMonth(int month, int year) {
     }
 }
 
-int numFirstMondays(int startYear, int endYear, int janFirstWeekday) {
+int numFirstMondays(int startYear, int endYear, int janFirstWeekday)
+{
     /*
       TODO: Add a loop here to compute the number of mondays that fall on the
       first of the month between January 1st of startYear and dec 31st of
       endYear. Note that janFirstWeekday is the weekday of january 1st of
       startYear.
      */
-    return 0;
+    int weekday = janFirstWeekday;
+    int nms = 0;
+    for (int yr = startYear; yr <= endYear; yr++) {
+        for (int m = JAN; m <= DEC; m++) {
+            weekday = (weekday + numDaysInMonth(m, yr)) % 7;
+            if (weekday == MONDAY)
+                nms++;
+        }
+    }
+    return nms;
 }
