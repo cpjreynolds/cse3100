@@ -3,26 +3,37 @@
 char lockerState(int l, int t)
 {
 
-  /*
-    TODO: This should compute the state of locker l after t students have done their toggling. If the locker is open, return 1. If the locker is closed, return 0.
-   */
+    /*
+      TODO: This should compute the state of locker l after t students have done
+      their toggling. If the locker is open, return 1. If the locker is closed,
+      return 0.
+     */
+    if (t == 1) {
+        return 1;
+    }
+    if (l % t == 0) {
+        return !lockerState(l, t - 1);
+    }
+    else {
+        return lockerState(l, t - 1);
+    }
 }
-
-
 
 int main(int argc, char* argv[])
 {
-  int locker;
-  while(1){
-    printf("Enter locker number: ");
-    scanf("%d", &locker);
-    if(locker < 0){
-      break;
-    }else if(lockerState(locker, locker) == 0){
-      printf("Closed\n");
-    }else{
-      printf("Open\n");
+    int locker;
+    while (1) {
+        printf("Enter locker number: ");
+        scanf("%d", &locker);
+        if (locker < 0) {
+            break;
+        }
+        else if (lockerState(locker, locker) == 0) {
+            printf("Closed\n");
+        }
+        else {
+            printf("Open\n");
+        }
     }
-  }
-  return 0;
+    return 0;
 }
