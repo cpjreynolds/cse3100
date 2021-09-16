@@ -1,5 +1,12 @@
-# cse3100
+# cse3100: systems programing
 
-## Systems Programming
+## Compiling
 
-Problem sets and labs.
+```sh
+mkdir build
+
+cd build && cmake ..
+
+make
+```
+
