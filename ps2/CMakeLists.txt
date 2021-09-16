@@ -5,3 +5,4 @@ add_executable(pi pi.c)
 add_executable(log log.c)
 add_executable(lockers lockers.c)
 
+target_compile_options(pi PRIVATE -O2)
