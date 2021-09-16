@@ -5,7 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern inline int prompt(const char* pmpt, const char* ifmt, ...) {
+int prompt(const char* pmpt, const char* ifmt, ...)
+{
     va_list ap;
     va_start(ap, ifmt);
     printf("%s", pmpt);
