@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-double leibniz_tail_recurrent(int, double) __attribute__((optimize(2)));
+double leibniz_tail_recurrent(int, double);
 
 double leibnizRecurrent(int n)
 {
