@@ -7,7 +7,7 @@ typedef struct ILNode {
     int number;
 } ILNode;
 
-typedef struct {
+typedef struct IntList {
     ILNode* head;
     ILNode* tail;
     size_t len;

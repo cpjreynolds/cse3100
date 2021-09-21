@@ -3,13 +3,13 @@
 
 #include <stdio.h>
 
-typedef struct IntVector{
-  int* numbers;
-  size_t size;
-  size_t capacity;
+typedef struct IntVector {
+    int* buf;
+    size_t len;
+    size_t cap;
 } IntVector;
 
-void initVector(IntVector* vec, int cap);
+void initVector(IntVector* vec, size_t cap);
 void freeVector(IntVector* vec);
 
 void pushBackVector(IntVector* vec, int number);

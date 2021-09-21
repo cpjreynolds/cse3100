@@ -2,9 +2,7 @@
 #define __VSTACK_H
 #include "vector.h"
 
-typedef struct Stack{
-  IntVector vector;
-} Stack;
+typedef struct IntVector Stack;
 
 void initStack(Stack* stack);
 void pushStack(Stack* stack, int number);

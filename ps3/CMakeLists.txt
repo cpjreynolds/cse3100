@@ -1,1 +1,5 @@
 add_executable(list_test list.c listTest.c)
+add_executable(vec_test vector.c vectorTest.c)
+add_executable(lstack_test list.c LStack.c LStackTest.c)
+add_executable(vstack_test vector.c VStack.c VStackTest.c)
+add_executable(qtest list.c LStack.c queue.c QTest.c)

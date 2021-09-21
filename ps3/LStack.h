@@ -2,9 +2,11 @@
 #define __LSTACK_H
 #include "list.h"
 
-typedef struct Stack{
-  IntList list; 
-} Stack;
+// typedef struct Stack{
+// IntList list;
+//} Stack;
+
+typedef struct IntList Stack;
 
 void initStack(Stack* stack);
 void pushStack(Stack* stack, int number);
