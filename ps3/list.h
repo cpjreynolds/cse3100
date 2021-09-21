@@ -2,23 +2,23 @@
 #define __LIST_H
 #include <stdlib.h>
 
-typedef struct ILNode{
-  struct ILNode* next;
-  int number;
+typedef struct ILNode {
+    struct ILNode* next;
+    int number;
 } ILNode;
 
-typedef struct IntList{
-  ILNode* head;
-  ILNode* tail;
-  size_t len;
+typedef struct {
+    ILNode* head;
+    ILNode* tail;
+    size_t len;
 } IntList;
 
 void initList(IntList* list);
 void freeList(IntList* list);
 
-void pushBackList(IntList* list, int number);
+void pushBackList(IntList* list, int num);
 int popBackList(IntList* list);
-void pushFrontList(IntList* list, int number);
+void pushFrontList(IntList* list, int num);
 int popFrontList(IntList* list);
 
 void sortList(IntList* list);
