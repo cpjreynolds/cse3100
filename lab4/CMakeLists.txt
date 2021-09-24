@@ -1,2 +1,2 @@
 add_executable(debug debug.c)
-target_compile_options(debug PRIVATE -g)
+add_executable(tree tree.c)
