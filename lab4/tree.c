@@ -13,8 +13,7 @@ typedef struct TNode {
 
 TNode* makeEmptyTree()
 {
-    TNode* n = malloc(sizeof(TNode));
-    return memset(n, 0, sizeof(TNode));
+    return calloc(1, sizeof(TNode));
 }
 
 static inline TNode* emplace_node(TNode** n, char* str)
@@ -132,11 +131,12 @@ int main(int argc, char* argv[])
       argv[1]. Call fopen to open it.
      */
     FILE* fp = fopen(argv[1], "r");
-    TNode* tree = makeEmptyTree();
     if (!fp) {
         perror("fopen");
         return EXIT_FAILURE;
     }
+
+    TNode* tree = makeEmptyTree();
     char word[256];
     size_t len;
     /*
@@ -153,8 +153,6 @@ int main(int argc, char* argv[])
      */
     if (fclose(fp))
         perror("fclose");
-
-    printTree(tree);
 
     while (1) {
         printf("word: ");
