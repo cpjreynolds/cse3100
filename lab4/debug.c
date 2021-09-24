@@ -13,7 +13,7 @@ typedef struct TokenArray{
  * from s to the duplicate string, and return the duplicate string. 
  */
 char* dupString(char* s, size_t len){
-  char* duplicate = malloc(len*sizeof(char));
+  char* duplicate = malloc((len+1)*sizeof(char));
   duplicate[len] = 0;
   for(size_t i = 0; i < len; i++){
     duplicate[i] = s[i];
@@ -38,10 +38,11 @@ int countTokens(char* s,char delim)
    int cnt = 0;
    int inToken = *s != delim;
    while (*s) {
-      if (*s == delim)
-	cnt += inToken;
-      inToken = *s != delim;
-      s++;
+       if (*s == delim || *(s+1)=='\0') {
+          cnt += inToken;
+       }
+       inToken = *s != delim;
+       s++;
    }
    return cnt;
 }
@@ -49,7 +50,7 @@ int countTokens(char* s,char delim)
 char* tokenEnd(char* from,char delim)
 {
    while (*from && *from != delim) from++;
-   return from - 1;
+   return from;
 }
 
 char* skipDelim(char* from,char delim)
@@ -76,7 +77,7 @@ TokenArray tokenize(char* string, char delim)
   char* ts = string;
   while(tokenIndex < numTok) {
      char* te = tokenEnd(ts,delim);
-     tokens[tokenIndex] = dupString(ts,te-ts+1);
+     tokens[tokenIndex] = dupString(ts,te-ts);
      ts = skipDelim(te,delim);
      tokenIndex++;
   }
