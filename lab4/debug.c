@@ -48,16 +48,16 @@ int countTokens(char* s, char delim)
     return cnt;
 }
 
-char* tokenEnd(char* from, char delim)
+char* skipDelim(char* from, char delim)
 {
-    while (*from && *from != delim)
+    while (*from && *from == delim)
         from++;
     return from;
 }
 
-char* skipDelim(char* from, char delim)
+char* tokenEnd(char* from, char delim)
 {
-    while (*from && *from == delim)
+    while (*from && *from != delim)
         from++;
     return from;
 }
@@ -77,7 +77,7 @@ TokenArray tokenize(char* string, char delim)
     size_t numTok = countTokens(string, delim);
     char** tokens = malloc(sizeof(char*) * numTok);
     size_t tokenIndex = 0;
-    char* ts = string;
+    char* ts = skipDelim(string, delim);
     while (tokenIndex < numTok) {
         char* te = tokenEnd(ts, delim);
         tokens[tokenIndex] = dupString(ts, te - ts);
