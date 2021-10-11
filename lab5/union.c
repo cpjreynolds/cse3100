@@ -139,8 +139,7 @@ int compareUnionAscending(const void* tagged_union1, const void* tagged_union2,
 {
     Variant* tU1 = (Variant*)tagged_union1;
     Variant* tU2 = (Variant*)tagged_union2;
-    VarFun* fps = fun_ptrs;
-    return fps[tU1->tag](tU1, tU2);
+    return ((VarFun*)fun_ptrs)[tU1->tag](tU1, tU2);
 }
 
 // To compare two tagged unions with the same tag by using an array of function
