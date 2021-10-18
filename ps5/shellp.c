@@ -1,5 +1,4 @@
 #include "shellp.h"
-#include <assert.h>
 
 // char* strdup(const char* s);
 
@@ -418,6 +417,32 @@ int setupCommandPipeline(Command* c)
     // stage waitStage: waits for the pipeline stage to complete You may use the
     // helper functions or write your own code to implement the pipeline
     // command.
+
+    for (int stg = 0; stg < (c->_nbs - 1); stg++) {
+        int pp[2];
+        pipe(pp);
+        setStageOutput(c->_stages[stg], pp[1]);
+        setStageInput(c->_stages[stg + 1], pp[0]);
+    }
+
+    if (c->_mode & R_INP) {
+        int infd = open(c->_input, O_RDONLY);
+        setStageInput(c->_stages[0], infd);
+    }
+
+    if (c->_mode & (R_OUTP | R_APPD)) {
+        int oflags = O_WRONLY | O_CREAT;
+        if (c->_mode & R_APPD) {
+            oflags |= O_APPEND;
+        }
+        int outfd = open(c->_output, oflags, 0666);
+        setStageOutput(c->_stages[c->_nbs - 1], outfd);
+    }
+
+    for (int i = 0; i < c->_nbs; i++) {
+        spawnStage(c->_stages[i]);
+    }
+    waitStage(c->_stages[c->_nbs - 1]);
     return 1;
 }
 
