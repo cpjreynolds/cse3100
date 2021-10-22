@@ -4,25 +4,27 @@
 #include <stdlib.h>
 
 typedef struct Task {
-   pid_t worker;
-   long long   query;
-   long long   answer;
+    pid_t worker;
+    long long query;
+    long long answer;
 } Task;
 
+// the original struct fields were hot garbage & confusing so I changed them.
 typedef struct SBuffer {
-   size_t sz;
-   int enter,leave,nb;
-   size_t mapSize;
-   Task  data[0];
+    size_t cap;   // maximum number of tasks in the buffer.
+    size_t enter; // offset to add next task at
+    size_t leave; // offset to take next task from
+    size_t mapsz; // size of the shared memory map in bytes
+    Task data[];  // Flexible array members are part of the C99 standard.
+                  // NOT data[0] like a barbarian.
 } SBuffer;
 
-SBuffer* makeBuffer(void* z,int sz,size_t mapSize);
-void bufferEnQueue(SBuffer* b,Task t);
+SBuffer* makeBuffer(void* z, int cap, size_t mapSize);
+void bufferEnQueue(SBuffer* b, Task t);
 Task bufferDeQueue(SBuffer* b);
 
-SBuffer* setupBuffer(char* zone,int nbTasks);
-SBuffer* getBuffer(char* zone,int nbTasks);
-void tearDownBuffer(char* zone,SBuffer* b);
-
+SBuffer* setupBuffer(char* zone, int nbTasks);
+SBuffer* getBuffer(char* zone, int nbTasks);
+void tearDownBuffer(char* zone, SBuffer* b);
 
 #endif
