@@ -19,12 +19,12 @@ typedef struct SBuffer {
                   // NOT data[0] like a barbarian.
 } SBuffer;
 
-SBuffer* makeBuffer(void* z, int cap, size_t mapSize);
+SBuffer* makeBuffer(void* z, size_t cap, size_t mapSize);
 void bufferEnQueue(SBuffer* b, Task t);
 Task bufferDeQueue(SBuffer* b);
 
-SBuffer* setupBuffer(char* zone, int nbTasks);
-SBuffer* getBuffer(char* zone, int nbTasks);
+SBuffer* setupBuffer(char* zone, size_t nbTasks);
+SBuffer* getBuffer(char* zone, size_t nbTasks);
 void tearDownBuffer(char* zone, SBuffer* b);
 
 #endif
