@@ -75,5 +75,6 @@ int main()
     sem_unlink("/semaTasks");
     sem_unlink("/semaASW");
     sem_unlink("/semaPullLock");
+    sem_unlink("/semaOtherlock");
     return 0;
 }
