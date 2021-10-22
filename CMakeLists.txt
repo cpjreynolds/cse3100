@@ -21,5 +21,6 @@ add_subdirectory(ps4)
 add_subdirectory(lab6)
 add_subdirectory(lab7)
 add_subdirectory(ps5)
+add_subdirectory(lab8)
 
 add_executable(ttest toolbox.c)
