@@ -9,11 +9,14 @@
 #include <unistd.h>
 
 #include "command.h"
-void checkError(int status, int line)
+static ssize_t checkError(ssize_t status, int line)
 {
     if (status < 0) {
         printf("socket error(%d)-%d: [%s]\n", getpid(), line, strerror(errno));
         exit(-1);
+    }
+    else {
+        return status;
     }
 }
 
@@ -55,22 +58,62 @@ int main(int argc, char* argv[])
     return 0;
 }
 
+// eat an entire message on the socket.
+#define SLURP(sd, dst)                                                         \
+    {                                                                          \
+        ssize_t nb = 0;                                                        \
+        do {                                                                   \
+            nb += checkError(recv(sd, &dst, sizeof(dst), 0), __LINE__);        \
+        } while (sizeof(dst) - nb > 0);                                        \
+    }
+
+// barf a message out onto the socket.
+#define GLORP(sd, src)                                                         \
+    {                                                                          \
+        ssize_t nb = 0;                                                        \
+        do {                                                                   \
+            nb += checkError(send(sd, &src, sizeof(src), 0), __LINE__);        \
+        } while (sizeof(src) - nb > 0);                                        \
+    }
+
+// read a payload and message.
+static inline Payload get_payload(int fd, char** buf)
+{
+    Payload p;
+    SLURP(fd, p);
+
+    p.code = ntohl(p.code);
+    p.length = ntohl(p.length);
+
+    *buf = calloc(p.length, 1);
+
+    ssize_t nb = 0;
+    do {
+        nb += checkError(recv(fd, *buf, p.length, 0), __LINE__);
+    } while (p.length - nb > 0);
+
+    return p;
+}
+
 void doLSCommand(int sid)
 {
-    Command c;
-    Payload p;
-    int status;
-    char* buf;
-    c.code = htonl(CC_LS);
-    memset(c.arg, 0, sizeof(c.arg));
     /*
-      TODO: Send Command c to the server. Then, use recv to read the response of
-      the server into Payload p. Following this payload, the actual actual
-      message will be sent to the client by the server. Payload p has a length
-      field, which is the length of this message.
+      TODO: Send Command c to the server. Then, use recv to read the
+      response of the server into Payload p. Following this payload, the
+      actual actual message will be sent to the client by the server.
+      Payload p has a length field, which is the length of this message.
 
       You should store the list of files in buf.
      */
+
+    Command c = {0}; // THIS is how to memset a struct on the stack.
+    Payload p;
+    char* buf;
+    c.code = htonl(CC_LS);
+    GLORP(sid, c);
+
+    p = get_payload(sid, &buf);
+
     if (p.code == PL_TXT)
         printf("Got: [\n%s]\n", buf);
     else {
@@ -81,33 +124,44 @@ void doLSCommand(int sid)
 
 void doGETCommand(int sid)
 {
-    Command c;
+    Command c = {0};
     Payload p;
-    int status;
     printf("Give a filename:");
-    char fName[256];
-    scanf("%s", fName);
+    // char fName[256];
+    scanf("%s", c.arg);
+    c.code = htonl(CC_GET);
+    GLORP(sid, c);
+
+    SLURP(sid, p);
+    p.code = ntohl(p.code);
+    p.length = ntohl(p.length);
+
     /*
       TODO: Prepare Command c, send it, and recv back into Payload p.
 
 
       Something that is important to note: payload p contains the code and
       length as integers in network byte order. You need to use the proper
-      function to convert p.length to host byte order. What function would you
-      use for this? It's either htonl, htons, ntohl, or ntohs.
+      function to convert p.length to host byte order. What function would
+      you use for this? It's either htonl, htons, ntohl, or ntohs.
      */
+
     receiveFileOverSocket(sid, c.arg, ".download", p.length);
     printf("transfer done\n");
 }
 
 void doPUTCommand(int sid)
 {
-    Command c;
-    Payload p;
-    int status;
+    Command c = {0};
+    Payload p = {0};
     printf("Give a local filename:");
-    char fName[256];
-    scanf("%s", fName);
+    // char fName[256];
+    scanf("%s", c.arg);
+    c.code = htonl(CC_PUT);
+    GLORP(sid, c);
+    p.code = ntohl(PL_FILE);
+    p.length = ntohl(getFileSize(c.arg));
+    GLORP(sid, p);
     /*
       TODO: Prepare Command c, and send it to the server. Then, prepare the
       Payload p, and send it to the server.

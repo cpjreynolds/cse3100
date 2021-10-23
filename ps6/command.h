@@ -9,12 +9,13 @@
 #define PL_TXT 0
 #define PL_FILE 1
 
-typedef struct CommantTag {
+typedef struct /*CommantTag*/ { // y'know anonymous structs have existed for
+                                // like....a while.
     int code;
     char arg[256];
 } Command;
 
-typedef struct PayloadTag {
+typedef struct /*PayloadTag*/ {
     int code;
     int length;
 } Payload;
