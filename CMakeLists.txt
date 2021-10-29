@@ -23,5 +23,6 @@ add_subdirectory(lab7)
 add_subdirectory(ps5)
 add_subdirectory(lab8)
 add_subdirectory(ps6)
+add_subdirectory(practice-mt2)
 
 add_executable(ttest toolbox.c)
