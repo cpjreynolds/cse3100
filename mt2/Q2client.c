@@ -116,6 +116,7 @@ int main(int argc, char* argv[])
                     tx_bytes += rc;
                 }
             }
+            free(instr);
         }
 
         if (pfds[0].revents & POLLIN) {

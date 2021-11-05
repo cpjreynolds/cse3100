@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
          * process.
          */
         cleanupDeadChildren();
-        int rc = poll(pfds, 2, 1000);
+        int rc = poll(pfds, sizeof(pfds) / sizeof(struct pollfd), 1000);
         if (rc == 0)
             continue;
         if (rc < 0) {
@@ -114,7 +114,6 @@ int main(int argc, char* argv[])
                 checkError(recv(conn, inbuf, sizeof(inbuf) - 1, 0), __LINE__);
             inbuf[nbytes] = '\0';
             if (strncmp("\\$die!", inbuf, sizeof(inbuf)) == 0) {
-                puts("got die command");
                 close(conn);
                 break;
             }
