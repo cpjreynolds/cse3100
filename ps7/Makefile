@@ -1,5 +1,6 @@
 CC=gcc
-CFLAGS=-O3
+# -03 made worse code.
+CFLAGS=-O2
 
 OS:=$(shell uname)
 ifneq ($(OS),Darwin)
