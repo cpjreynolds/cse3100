@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-O2
+CFLAGS=-O3
 
 OS:=$(shell uname)
 ifneq ($(OS),Darwin)
@@ -12,7 +12,7 @@ matrix: matrix.o main.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 %.o : %.c
-	$(CC) -c $(CFLAGS) $< $(LDFLAGS)
+	$(CC) -c $(CFLAGS) $<
 
 clean:
 	rm -rf *.o matrix *~
