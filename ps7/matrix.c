@@ -86,20 +86,6 @@ error:
     exit(EXIT_FAILURE);
 }
 
-Matrix* matrix_make(int rows, int cols)
-{
-    size_t nbytes = matrix_sizeof(rows, cols);
-    Matrix* mat = malloc(nbytes);
-    mat->r = rows;
-    mat->c = cols;
-    return mat;
-}
-
-void matrix_free(Matrix* mat)
-{
-    free(mat->data);
-}
-
 /*
  * Unmaps the shared memory from the calling process' address space.
  *
@@ -129,8 +115,22 @@ void matrix_destroy_shared(Matrix* mat)
     assert(shm_unlink(namebuf) == 0);
 }
 
+Matrix* matrix_make(int rows, int cols)
+{
+    size_t nbytes = matrix_sizeof(rows, cols);
+    Matrix* mat = malloc(nbytes);
+    mat->r = rows;
+    mat->c = cols;
+    return mat;
+}
+
+void matrix_free(Matrix* mat)
+{
+    free(mat->data);
+}
+
 /*
- * I wanna go fast.
+ * get_rekt_laurent.jpg
  */
 Matrix* matrix_from_file(int fd)
 {
@@ -139,6 +139,8 @@ Matrix* matrix_from_file(int fd)
     if (rc != 0)
         goto error;
     char* fmap = mmap(NULL, fs.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+    if (fmap == MAP_FAILED)
+        goto error;
 
     // strtol sets the second argument to point to the character following the
     // last character interpreted as the integer.
@@ -153,11 +155,12 @@ Matrix* matrix_from_file(int fd)
 
     for (int i = 0; i < rows * cols; i++) {
         int v = strtol(start, &end, 0);
-        assert(start != end);
+        assert(start != end); // sanity check
         mat->data[i] = v;
         start = end;
     }
 
+    munmap(fmap, fs.st_size);
     return mat;
 error:
     perror(__func__);
@@ -172,101 +175,6 @@ void matrix_print(Matrix* mat)
         }
         printf("%d\n", M(mat, r, mat->c - 1));
     }
-}
-
-/*
- * returns the number of bytes needed to hold a matrix of r x c values
- * (type int)
- */
-size_t sizeMatrix(int r, int c)
-{
-    assert(0); // stub.
-    return 0;
-}
-
-/*
- * allocates space to hold a matrix of r x c values (type int)
- */
-Matrix* makeMatrix(int r, int c)
-{
-    assert(0);
-    return NULL;
-}
-
-/*
- * Allocates space for a matrix of r x c from a _given_ memory block at
- * address zone.
- */
-Matrix* makeMatrixMap(void* zone, int r, int c)
-{
-    assert(0); // stub
-    return NULL;
-}
-
-/*
- * Reads a single integer from the FILE fd
- * output: a single integer.
- * Note: the function uses getc_unlocked to _not_ pay the overhead of locking
- * and unlocking the file for each integer to be read (imagine reading a matrix
- * of 1000x1000, that's 1,000,000 calls to getc and therefore 1,000,000 calls to
- * locking the file.
- */
-int readValue(FILE* fd)
-{
-    int v = 0;
-    char ch;
-    int neg = 1;
-    while (((ch = getc_unlocked(fd)) != EOF) && isspace(ch))
-        ; // skip WS.
-    while (!isspace(ch)) {
-        if (ch == '-')
-            neg = -1;
-        else
-            v = v * 10 + ch - '0';
-        ch = getc_unlocked(fd);
-    }
-    return neg * v;
-}
-
-Matrix* readMatrix(FILE* fd)
-{
-    /*
-     * Read a matrix from a file (fd). The matrix is held in a text format that
-     * first conveys the number of rows and columns, then, each row is on a line
-     * of text and all the values are separated by white spaces. Namely: r c
-     * v0,0 v0,1 .... v0,c-1
-     * v1,0 v1,1 .... v1,c-1
-     * ....
-     * vr-1,0 ....    v_r-1,c-1
-     */
-    int r, c, v;
-    int nv = fscanf(fd, "%d %d", &r, &c);
-    assert(nv == 2);
-    Matrix* m = makeMatrix(r, c);
-    flockfile(fd);
-    for (int i = 0; i < r; i++) {
-        for (int j = 0; j < c; j++) {
-            v = readValue(fd);
-            M(m, i, j) = v;
-        }
-    }
-    funlockfile(fd);
-    return m;
-}
-
-void freeMatrix(Matrix* m)
-{
-    /*
-     * deallocates the space used by matrix m
-     */
-}
-
-void printMatrix(Matrix* m)
-{
-    /*
-     * Print the matrix on the sandard output. One row per line, values for the
-     * row separated by white spaces.
-     */
 }
 
 Matrix* multMatrix(Matrix* a, Matrix* b, Matrix* into)

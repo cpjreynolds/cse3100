@@ -30,17 +30,15 @@ inline size_t matrix_sizeof(int r, int c)
 // My non-infuriating API
 Matrix* matrix_make_shared(int rows, int cols);
 Matrix* matrix_get_shared(void);
+void matrix_free_shared(Matrix* mat);
+void matrix_destroy_shared(Matrix* mat);
+
+Matrix* matrix_make(int rows, int cols);
+void matrix_free(Matrix* mat);
 
 Matrix* matrix_from_file(int fd);
 void matrix_print(Matrix* mat);
 
-// Given API. No thanks.
-size_t sizeMatrix(int r, int c);
-Matrix* makeMatrixMap(void* m, int r, int c);
-Matrix* makeMatrix(int r, int c);
-Matrix* readMatrix(FILE* fd);
-void freeMatrix(Matrix* m);
-void printMatrix(Matrix* m);
 Matrix* multMatrix(Matrix* a, Matrix* b, Matrix* into);
 Matrix* parMultMatrix(int nbW, sem_t* sem, Matrix* a, Matrix* b, Matrix* into);
 
