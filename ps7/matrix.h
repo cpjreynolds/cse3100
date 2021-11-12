@@ -22,7 +22,7 @@ typedef struct Matrix {
  * **NOT** the number of bytes for a rows*cols matrix, but the number of bytes
  * for the entire Matrix struct, fields and data.
  */
-inline size_t matrix_sizeof(int r, int c)
+static inline size_t matrix_sizeof(int r, int c)
 {
     assert(r > 0 && c > 0);
     return offsetof(Matrix, data) + r * c * sizeof(int);
