@@ -31,6 +31,52 @@ void insertSortedList(DLList* list, int v)
       integer v. Each node has a mutex; use those mutexes to coordinate the
       threads.
      */
+
+    pthread_mutex_t* curlock = &list->mtx;
+    pthread_mutex_lock(curlock);
+
+    DLNode* cur = list->head;
+    while (cur && cur->value <= v) {
+        /*
+         * if (!cur->next) {
+         *     break;
+         * }
+         */
+        pthread_mutex_lock(&cur->mtx);
+        pthread_mutex_unlock(curlock);
+        curlock = &cur->mtx;
+        cur = cur->next;
+    }
+    DLNode* nn = malloc(sizeof(DLNode));
+    nn->value = v;
+    pthread_mutex_init(&nn->mtx, NULL);
+    if (cur) {
+        // We found the spot: before `cur`
+        DLNode* prev = cur->prv;
+        DLNode* nxt = cur;
+
+        nn->prv = prev;
+        nn->next = cur;
+        if (prev) {
+            prev->next = nn;
+        }
+        else {
+            list->head = nn;
+        }
+        nxt->prv = nn;
+    }
+    else {
+        nn->next = NULL;
+        nn->prv = list->tail;
+        if (list->tail) {
+            list->tail->next = nn;
+        }
+        else {
+            list->head = nn;
+        }
+        list->tail = nn;
+    }
+    pthread_mutex_unlock(curlock);
 }
 
 void printListForward(DLList* list)
