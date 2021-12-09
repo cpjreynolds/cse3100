@@ -1,10 +1,15 @@
 CC=cc
 CFLAGS=-O3
 
+OS:=$(shell uname)
+ifneq ($(OS),Darwin)
+	LDFLAGS=-pthread -lrt
+endif
+
 all: rpair detSeq detMT philo
 
 rpair: rpair.o
-	$(CC) $(CFLAGS) -o $@ $^ -lrt
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 detSeq: matrix.o detSeq.o
 	$(CC) $(CFLAGS) -o $@ $^ -lpthread
