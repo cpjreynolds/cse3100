@@ -2,7 +2,6 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <math.h>
-#include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,10 +13,9 @@
 
 /* TODO: Complete the main and createSamples functions for Q1 */
 
-static void createSamples(unsigned, double, sem_t*, long*)
-    __attribute__((noreturn));
+static void createSamples(unsigned, double, long*) __attribute__((noreturn));
 
-void createSamples(unsigned wID, double d, sem_t* sem, long* shared)
+void createSamples(unsigned wID, double d, long* shared)
 {
     long ttl = 0; // Number of events detected by a process
     // unsigned seed = wID; // seed for random number generation // why.
@@ -44,9 +42,7 @@ void createSamples(unsigned wID, double d, sem_t* sem, long* shared)
         }
         --nbSamples;
     }
-
     *shared = ttl;
-    sem_post(sem);
     exit(EXIT_SUCCESS);
 }
 
@@ -59,10 +55,6 @@ int main(int argc, char* argv[])
     float d = atof(argv[1]);
     long trials = atol(argv[2]);  // total number of trials to be executed
     int nworkers = atoi(argv[3]); // number of worker processes
-
-    sem_t* sem = sem_open("/rpair-sem", O_CREAT | O_EXCL, S_IRWXU, 0);
-    if (sem == SEM_FAILED)
-        goto error;
 
     int shmd = shm_open("/rpair-shm", O_CREAT | O_RDWR | O_EXCL, 0666);
     if (shmd < 0)
@@ -86,12 +78,12 @@ int main(int argc, char* argv[])
 
     for (int wid = 0; wid < nworkers; ++wid) {
         if (fork() == 0) {
-            createSamples(wid, d, sem, &shared[wid]);
+            createSamples(wid, d, &shared[wid]);
         }
     }
     // once this returns, all results are available in shared buffer.
     for (int i = 0; i < nworkers; ++i) {
-        sem_wait(sem);
+        wait(NULL);
     }
 
     long ttl = 0; // total number of events
@@ -105,14 +97,10 @@ int main(int argc, char* argv[])
     printf("Total trials = %ld \t Total events = %ld \t Probability = %lf\n",
            trials, ttl, p);
     munmap(shared, shmlen);
-    sem_close(sem);
-    sem_unlink("/rpair-sem");
     shm_unlink("/rpair-shm");
     return 0;
-
 error:
     perror(__func__);
-    sem_unlink("/rpair-sem");
     shm_unlink("/rpair-shm");
     return 1;
 }
